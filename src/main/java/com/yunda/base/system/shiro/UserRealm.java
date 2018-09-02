@@ -5,6 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.yunda.base.common.exception.BusinessException;
+import com.yunda.base.common.exception.SyAuthException;
+import com.yunda.base.common.utils.MacAddressUtils;
+import com.yunda.base.common.utils.StringUtil;
+import com.yunda.base.common.utils.StringUtils;
+import com.yunda.base.sy.dao.SyAuthDao;
+import com.yunda.base.sy.domain.SyAuthDO;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -24,6 +31,10 @@ import com.yunda.base.system.dao.UserDao;
 import com.yunda.base.system.domain.UserDO;
 import com.yunda.base.system.domain.UserToken;
 import com.yunda.base.system.service.MenuService;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class UserRealm extends AuthorizingRealm {
 
@@ -62,7 +73,24 @@ public class UserRealm extends AuthorizingRealm {
 		if (list.get(0).getStatus() == 0) {
 			throw new LockedAccountException("账号已被锁定,请联系管理员");
 		}
-		SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(list.get(0), password, getName());
+
+		//授权码判定
+		SyAuthDao syAuthMapper = ApplicationContextRegister.getBean(SyAuthDao.class);
+		SyAuthDO syAuthDO = syAuthMapper.queryByUsername(username);
+		if(syAuthDO==null){
+			throw new SyAuthException("非法用户");
+		}
+		String macAddressDB = syAuthDO.getMacAddress();
+		if(StringUtil.isNullStr(macAddressDB)){
+            throw new SyAuthException("用户没有激活，请先激活");
+		}
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String remoteIP = MacAddressUtils.getRemoteIP(request);
+        String macAddress = MacAddressUtils.getMACAddress(remoteIP);
+        if(!macAddressDB.equals(macAddress)){
+            throw new SyAuthException("该电脑没有授权");
+        }
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(list.get(0), password, getName());
 		return info;
 	}
 

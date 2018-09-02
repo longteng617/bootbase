@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yunda.base.sy.dao.SyAuthDao">
+
+    <select id="get" resultType="com.yunda.base.sy.domain.SyAuthDO">
+		select `id`,`auth_code`,`user_name`,`mac_address`,`create_by`,`create_time`,`update_by`,`update_time`,`delete_flag`
+		from sy_auth where id = #{value} and delete_flag = 0
+	</select>
+    <select id="queryByUsername" resultType="com.yunda.base.sy.domain.SyAuthDO">
+		select `id`,`auth_code`,`user_name`,`mac_address`,`create_by`,`create_time`,`update_by`,`update_time`,`delete_flag`
+		 from sy_auth where user_name = #{value} and delete_flag = 0
+	</select>
+
+    <select id="list" resultType="com.yunda.base.sy.domain.SyAuthDO">
+        select
+        `id`,`auth_code`,`user_name`,`mac_address`,`create_by`,`create_time`,`update_by`,`update_time`,`delete_flag`
+        from sy_auth
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="authCode != null and authCode != ''">and auth_code = #{authCode}</if>
+            <if test="userName != null and userName != ''">and user_name = #{userName}</if>
+            <if test="macAddress != null and macAddress != ''">and mac_address = #{macAddress}</if>
+            <if test="createBy != null and createBy != ''">and create_by = #{createBy}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="updateBy != null and updateBy != ''">and update_by = #{updateBy}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and delete_flag = #{deleteFlag}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from sy_auth
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="authCode != null and authCode != ''">and auth_code = #{authCode}</if>
+            <if test="userName != null and userName != ''">and user_name = #{userName}</if>
+            <if test="macAddress != null and macAddress != ''">and mac_address = #{macAddress}</if>
+            <if test="createBy != null and createBy != ''">and create_by = #{createBy}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="updateBy != null and updateBy != ''">and update_by = #{updateBy}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="deleteFlag != null and deleteFlag != ''">and delete_flag = #{deleteFlag}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.yunda.base.sy.domain.SyAuthDO" useGeneratedKeys="true" keyProperty="id">
+		insert into sy_auth
+		(
+			`auth_code`, 
+			`user_name`, 
+			`mac_address`, 
+			`create_by`, 
+			`create_time`, 
+			`update_by`, 
+			`update_time`, 
+			`delete_flag`
+		)
+		values
+		(
+			#{authCode}, 
+			#{userName}, 
+			#{macAddress}, 
+			#{createBy}, 
+			#{createTime}, 
+			#{updateBy}, 
+			#{updateTime}, 
+			#{deleteFlag}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.yunda.base.sy.domain.SyAuthDO">
+        update sy_auth
+        <set>
+            <if test="authCode != null">`auth_code` = #{authCode},</if>
+            <if test="userName != null">`user_name` = #{userName},</if>
+            <if test="macAddress != null">`mac_address` = #{macAddress},</if>
+            <if test="createBy != null">`create_by` = #{createBy},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateBy != null">`update_by` = #{updateBy},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="deleteFlag != null">`delete_flag` = #{deleteFlag}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateMacAddress">
+        update sy_auth set macAddress = #{macAddress} where auth_code = #{authCode} and delete_flag - 0
+    </update>
+
+    <delete id="remove">
+		delete from sy_auth where id = #{value}
+	</delete>
+
+    <delete id="batchRemove">
+        delete from sy_auth where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

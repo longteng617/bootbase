@@ -27,81 +27,87 @@ import com.yunda.base.common.utils.ShiroUtils;
 import com.yunda.base.system.domain.MenuDO;
 import com.yunda.base.system.service.MenuService;
 import com.yunda.base.common.utils.DesEncrypt;
+
 @Controller
 public class LoginController extends BaseController {
-	@SuppressWarnings("unused")
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @SuppressWarnings("unused")
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	MenuService menuService;
+    @Autowired
+    MenuService menuService;
 
-	@Autowired
-	FileService fileService;
+    @Autowired
+    FileService fileService;
 
-	@Autowired
-	AutoBaseConfig baseConfig;
+    @Autowired
+    AutoBaseConfig baseConfig;
 
-	@GetMapping({ "/bootbase", "" })
-	String welcome(Model model) {
-		return "redirect:/login";
-	}
+    @GetMapping({"/bootbase", ""})
+    String welcome(Model model) {
+        return "redirect:/login";
+    }
 
-	@Log("请求访问主页")
-	@GetMapping({ "/index" })
-	String index(Model model) {
-		List<Tree<MenuDO>> menus = menuService.listMenuTree(getUserId());
-		model.addAttribute("menus", menus);
-		model.addAttribute("name", getUser().getName());
-		FileDO fileDO = fileService.get(getUser().getPicId());
-		if (fileDO != null && fileDO.getUrl() != null) {
-			if (fileService.isExist(fileDO.getUrl())) {
-				model.addAttribute("picUrl", baseConfig.getUploadLocal() + fileDO.getUrl());
-			} else {
-				model.addAttribute("picUrl", "/bootbase/img/photo_s.jpg");
-			}
-		} else {
-			model.addAttribute("picUrl", "/bootbase/img/photo_s.jpg");
-		}
-		model.addAttribute("username", getUser().getUsername());
-		return "index_v1";
-	}
+    @GetMapping({ "/active" })
+    public String active() {
+        return "/nologin/active";
+    }
 
-	@GetMapping("/login")
-	String login() {
-		return "login";
-	}
+    @Log("请求访问主页")
+    @GetMapping({"/index"})
+    String index(Model model) {
+        List<Tree<MenuDO>> menus = menuService.listMenuTree(getUserId());
+        model.addAttribute("menus", menus);
+        model.addAttribute("name", getUser().getName());
+        FileDO fileDO = fileService.get(getUser().getPicId());
+        if (fileDO != null && fileDO.getUrl() != null) {
+            if (fileService.isExist(fileDO.getUrl())) {
+                model.addAttribute("picUrl", baseConfig.getUploadLocal() + fileDO.getUrl());
+            } else {
+                model.addAttribute("picUrl", "/bootbase/img/photo_s.jpg");
+            }
+        } else {
+            model.addAttribute("picUrl", "/bootbase/img/photo_s.jpg");
+        }
+        model.addAttribute("username", getUser().getUsername());
+        return "index_v1";
+    }
 
-	@Log("登录")
-	@PostMapping("/login")
-	@ResponseBody
-	R ajaxLogin(String username, String password) {
-		Subject subject = SecurityUtils.getSubject();
-		try {
-			password = DesEncrypt.decryption(password, "12345678");
-			username = DesEncrypt.decryption(username, "12345678");
-			password = MD5Utils.encrypt(username, password);
-			UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-			subject.login(token);
-			return R.ok();
-		} catch (Exception e) {
-			return R.error("用户或密码错误");
-		}
-	}
+    @GetMapping("/login")
+    String login() {
+        return "login";
+    }
 
-	@GetMapping("/logout")
-	String logout() {
-		ShiroUtils.logout();
-		return "redirect:/login";
-	}
+    @Log("登录")
+    @PostMapping("/login")
+    @ResponseBody
+    R ajaxLogin(String username, String password) {
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            password = DesEncrypt.decryption(password, "12345678");
+            username = DesEncrypt.decryption(username, "12345678");
+            password = MD5Utils.encrypt(username, password);
+            UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+            subject.login(token);
+            return R.ok();
+        } catch (Exception e) {
+            return R.error("用户或密码错误");
+        }
+    }
 
-	@GetMapping("/main")
-	String main() {
-		return "main";
-	}
+    @GetMapping("/logout")
+    String logout() {
+        ShiroUtils.logout();
+        return "redirect:/login";
+    }
 
-	@GetMapping("/403")
-	String error403() {
-		return "403";
-	}
+    @GetMapping("/main")
+    String main() {
+        return "main";
+    }
+
+    @GetMapping("/403")
+    String error403() {
+        return "403";
+    }
 
 }
