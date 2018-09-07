@@ -7,9 +7,15 @@
 		select `id`,`auth_code`,`user_name`,`mac_address`,`create_by`,`create_time`,`update_by`,`update_time`,`delete_flag`
 		from sy_auth where id = #{value} and delete_flag = 0
 	</select>
+
     <select id="queryByUsername" resultType="com.yunda.base.sy.domain.SyAuthDO">
 		select `id`,`auth_code`,`user_name`,`mac_address`,`create_by`,`create_time`,`update_by`,`update_time`,`delete_flag`
 		 from sy_auth where user_name = #{value} and delete_flag = 0
+	</select>
+
+    <select id="queryByAuthCode" resultType="com.yunda.base.sy.domain.SyAuthDO">
+		select `id`,`auth_code`,`user_name`,`mac_address`,`create_by`,`create_time`,`update_by`,`update_time`,`delete_flag`
+		 from sy_auth where auth_code = #{authCode} and delete_flag = 0
 	</select>
 
     <select id="list" resultType="com.yunda.base.sy.domain.SyAuthDO">
@@ -96,7 +102,7 @@
     </update>
 
     <update id="updateMacAddress">
-        update sy_auth set macAddress = #{macAddress} where auth_code = #{authCode} and delete_flag - 0
+        update sy_auth set macAddress = #{macAddress} where auth_code = #{authCode} and delete_flag = 0
     </update>
 
     <delete id="remove">

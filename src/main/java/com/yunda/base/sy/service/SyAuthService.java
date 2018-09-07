@@ -15,6 +15,8 @@ import java.util.Map;
 public interface SyAuthService {
 	
 	SyAuthDO get(Long id);
+
+	SyAuthDO queryByAuthCode(String authCode);
 	
 	List<SyAuthDO> list(Map<String, Object> map);
 	

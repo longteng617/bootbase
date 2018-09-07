@@ -20,6 +20,8 @@ public interface SyAuthDao {
 	SyAuthDO get(Long id);
 
 	SyAuthDO queryByUsername(String username);
+
+	SyAuthDO queryByAuthCode(String authCode);
 	
 	List<SyAuthDO> list(Map<String, Object> map);
 	

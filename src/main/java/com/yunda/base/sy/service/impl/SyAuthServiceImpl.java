@@ -21,7 +21,12 @@ public class SyAuthServiceImpl implements SyAuthService {
 	public SyAuthDO get(Long id){
 		return syAuthDao.get(id);
 	}
-	
+
+	@Override
+	public SyAuthDO queryByAuthCode(String authCode) {
+		return syAuthDao.queryByAuthCode(authCode);
+	}
+
 	@Override
 	public List<SyAuthDO> list(Map<String, Object> map){
 		return syAuthDao.list(map);

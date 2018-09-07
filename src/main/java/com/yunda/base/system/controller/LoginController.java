@@ -47,11 +47,6 @@ public class LoginController extends BaseController {
         return "redirect:/login";
     }
 
-    @GetMapping({ "/active" })
-    public String active() {
-        return "/nologin/active";
-    }
-
     @Log("请求访问主页")
     @GetMapping({"/index"})
     String index(Model model) {

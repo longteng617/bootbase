@@ -1,11 +1,11 @@
 $(document).ready(function () {
         $("#login").on('click',function(){$("#signupForm").submit();});
-        $("#active").on('click',function () {
-            window.location.href=ctx+'active';
-        });
-        $("#commit").on('click',function () {
-            $("#signupForm2").submit();
-        })
+        // $("#active").on('click',function () {
+        //     window.location.href=ctx+'active';
+        // });
+        // $("#commit").on('click',function () {
+        //     $("#signupForm2").submit();
+        // })
         validateRule();
     });
 
