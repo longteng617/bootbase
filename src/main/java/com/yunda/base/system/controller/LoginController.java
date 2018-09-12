@@ -85,7 +85,7 @@ public class LoginController extends BaseController {
             subject.login(token);
             return R.ok();
         } catch (Exception e) {
-            return R.error("用户或密码错误");
+            return R.error(e.getMessage());
         }
     }
 

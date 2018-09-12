@@ -73,23 +73,24 @@ public class UserRealm extends AuthorizingRealm {
 		if (list.get(0).getStatus() == 0) {
 			throw new LockedAccountException("账号已被锁定,请联系管理员");
 		}
-
-		//授权码判定
-		SyAuthDao syAuthMapper = ApplicationContextRegister.getBean(SyAuthDao.class);
-		SyAuthDO syAuthDO = syAuthMapper.queryByUsername(username);
-		if(syAuthDO==null){
-			throw new SyAuthException("非法用户");
+		if(!username.equals("admin")){
+			//授权码判定
+			SyAuthDao syAuthMapper = ApplicationContextRegister.getBean(SyAuthDao.class);
+			SyAuthDO syAuthDO = syAuthMapper.queryByUsername(username);
+			if(syAuthDO==null){
+				throw new SyAuthException("非法用户");
+			}
+			String macAddressDB = syAuthDO.getMacAddress();
+			if(StringUtil.isNullStr(macAddressDB)){
+				throw new SyAuthException("用户没有激活，请先激活");
+			}
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+			String remoteIP = MacAddressUtils.getIpAddr(request);
+			String macAddress = MacAddressUtils.getMACAddress(remoteIP);
+			if(!macAddressDB.equals(macAddress)){
+				throw new SyAuthException("该电脑没有授权");
+			}
 		}
-		String macAddressDB = syAuthDO.getMacAddress();
-		if(StringUtil.isNullStr(macAddressDB)){
-            throw new SyAuthException("用户没有激活，请先激活");
-		}
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		String remoteIP = MacAddressUtils.getRemoteIP(request);
-        String macAddress = MacAddressUtils.getMACAddress(remoteIP);
-        if(!macAddressDB.equals(macAddress)){
-            throw new SyAuthException("该电脑没有授权");
-        }
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(list.get(0), password, getName());
 		return info;
 	}

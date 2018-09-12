@@ -41,8 +41,8 @@ public class ActiveController extends BaseController {
             return R.error("该授权码已经失效");
         }
         String remoteIP = MacAddressUtils.getIpAddr(request);
-        //String macAddress = MacAddressUtils.getMACAddress(remoteIP);
-        String macAddress =  MacAddressUtils.getMacAddress(remoteIP);
+        String macAddress = MacAddressUtils.getMACAddress(remoteIP);
+//        String macAddress =  MacAddressUtils.getMacAddress(remoteIP);
         if(StringUtil.isNullStr(macAddress)){
             return R.error("调用出现异常");
         }

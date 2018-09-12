@@ -96,7 +96,7 @@ public class SyAuthController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/update-mac-address",method = {RequestMethod.GET,RequestMethod.POST})
 	public R updateMacAddress(HttpServletRequest request,String authCode){
-		String remoteIP = MacAddressUtils.getRemoteIP(request);
+		String remoteIP = MacAddressUtils.getIpAddr(request);
         String macAddress = MacAddressUtils.getMACAddress(remoteIP);
         syAuthService.updateMacAddress(authCode,macAddress);
         return R.ok();

@@ -1,10 +1,17 @@
 $(document).ready(function () {
     $("#active").on('click',function(){
-        active();
+        $("#signupForm").submit();
     });
+});
+
+$.validator.setDefaults({
+    submitHandler: function () {
+        active();
+    }
 });
 function active() {
     var authCode = $("#authCode").val();
+    console.log(authCode);
     $.ajax({
         type: "POST",
         url: ctx+"active",
